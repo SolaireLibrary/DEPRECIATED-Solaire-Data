@@ -42,10 +42,10 @@ namespace Solaire {
         T* mData;
         int32_t mSize;
     private:
-        ContiguousContainer(ContiguousContainer&&);
-        ContiguousContainer(const ContiguousContainer&);
-        ContiguousContainer& operator=(ContiguousContainer&&);
-        ContiguousContainer& operator=(const ContiguousContainer&);
+        ContiguousContainer(ContiguousContainer<T>&&);
+        ContiguousContainer(const ContiguousContainer<T>&);
+        ContiguousContainer& operator=(ContiguousContainer<T>&&);
+        ContiguousContainer& operator=(const ContiguousContainer<T>&);
     protected:
         // Inherited from Container
 

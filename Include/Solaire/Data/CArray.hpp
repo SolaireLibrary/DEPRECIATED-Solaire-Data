@@ -42,10 +42,10 @@ namespace Solaire {
         T* mData;
         int32_t mSize;
     private:
-        CArray(CArray&&);
-        CArray(const CArray&);
-        CArray& operator=(CArray&&);
-        CArray& operator=(const CArray&);
+        CArray(CArray<T>&&);
+        CArray(const CArray<T>&);
+        CArray& operator=(CArray<T>&&);
+        CArray& operator=(const CArray<T>&);
     protected:
         // Inherited from Container
 
