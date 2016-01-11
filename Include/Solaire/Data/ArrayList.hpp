@@ -59,6 +59,7 @@ namespace Solaire{
 		Type* mData;
     private:
         bool CopyTo(Type* const aArray) const throw() {
+            //std::cout << "CopyTo" << std::endl;
             const int32_t size = mHead;
             for(int32_t i = 0; i < size; ++i) {
                 new(aArray + i) Type(mData[i]);
@@ -67,6 +68,7 @@ namespace Solaire{
         }
 
         bool MoveTo(Type* const aArray) throw() {
+            //std::cout << "MoveTo" << std::endl;
             const int32_t size = mHead;
             for(int32_t i = 0; i < size; ++i) {
                 new(aArray + i) Type(std::move(mData[i]));
@@ -76,6 +78,7 @@ namespace Solaire{
         }
 
         bool DestructAll() throw() {
+            //std::cout << "DestructAll" << std::endl;
             const int32_t size = mHead;
             for(int32_t i = 0; i < size; ++i) {
                 mData[i].~Type();
@@ -84,20 +87,24 @@ namespace Solaire{
         }
 
         bool ShiftUp(const int32_t aIndex) throw() {
-            if(mHead + 1 >= mSize) Reallocate(mSize * 2);
+            //std::cout << "ShiftUp" << std::endl;
+            // Create a new object at the end of the list
+            PushBack(mData[mHead - 1]);
+
+            // Shift up existing objects
             const int32_t head = mHead - 1;
-            new(mHead) Type(std::move(mData[mHead - 1]));
-            for(int32_t i = mHead; i >= aIndex; --i) {
-                Type& high = mHead[i];
-                Type& low = mHead[i - 1];
+            for(int32_t i = head; i > aIndex; --i) {
+                Type& high = mData[i];
+                Type& low = mData[i - 1];
                 high = std::move(low);
             }
-            ++mHead;
+
             return true;
         }
 
         bool ShiftDown(const int32_t aIndex) throw() {
-            const int32_t size = mHead - 1;
+            //std::cout << "ShiftDown" << std::endl;
+            /*const int32_t size = mHead - 1;
             for(int32_t i = mHead; i < size; ++i) {
                 Type& high = mHead[i + 1];
                 Type& low = mHead[i];
@@ -105,10 +112,12 @@ namespace Solaire{
             }
             --mHead;
             mData[mHead].Type();
-            return true;
+            return true;*/
+            return false;
         }
 
         bool Reallocate(const Index aSize) throw() {
+            //std::cout << "Reallocate" << std::endl;
             Type* const ptr = static_cast<Type*>(mAllocator->Allocate(sizeof(Type) * aSize));
             if(! MoveTo(ptr)) {
                 mAllocator->Deallocate(ptr);
@@ -126,22 +135,26 @@ namespace Solaire{
             return mData + aOffset;
         }
 
-        SharedAllocation<Iterator<TYPE>> SOLAIRE_EXPORT_CALL Begin() throw() override {
-            return mAllocator->SharedAllocate<ContiguousIterator>(*mAllocator, mData, 0);
+        SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL Begin() throw() override {
+            //! \todo Implement iterator
+            //return mAllocator->SharedAllocate<ContiguousIterator>(*mAllocator, mData, 0);
+            return SharedAllocation<Iterator<Type>>();
         }
 
-        SharedAllocation<Iterator<TYPE>> SOLAIRE_EXPORT_CALL End() throw() override {
-            return mAllocator->SharedAllocate<ContiguousIterator>(*mAllocator, mData, mHead);
+        SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL End() throw() override {
+            //! \todo Implement iterator
+            //return mAllocator->SharedAllocate<ContiguousIterator>(*mAllocator, mData, mHead);
+            return SharedAllocation<Iterator<Type>>();
         }
 
-        SharedAllocation<Iterator<TYPE>> SOLAIRE_EXPORT_CALL Rbegin() throw() override {
+        SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL Rbegin() throw() override {
             //! \todo Implement reverse iterator
-            return mAllocator->SharedAllocate<ContiguousIterator>(*mAllocator, mData, 0);
+            return SharedAllocation<Iterator<Type>>();
         }
 
-        SharedAllocation<Iterator<TYPE>> SOLAIRE_EXPORT_CALL Rend() throw() override {
+        SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL Rend() throw() override {
             //! \todo Implement reverse iterator
-            return mAllocator->SharedAllocate<ContiguousIterator>(*mAllocator, mData, mHead);
+            return SharedAllocation<Iterator<Type>>();
         }
 
     public:
@@ -222,10 +235,13 @@ namespace Solaire{
         // Inherited from Stack
 
 		Type& SOLAIRE_EXPORT_CALL PushBack(const Type& aValue) throw() override {
-		    if(mHead == mSize) {
+            if(mHead == mSize) {
                 Reallocate(mSize * 2);
 		    }
-            return mData[mHead++] = aValue;
+		    Type* const ptr = mData + mHead;
+		    ++mHead;
+		    new(ptr) Type(aValue);
+            return *ptr;
         }
 
 		Type SOLAIRE_EXPORT_CALL PopBack() throw() {
@@ -243,6 +259,8 @@ namespace Solaire{
 
         // Inherited from Deque
 		Type& SOLAIRE_EXPORT_CALL PushFront(const Type& aValue) throw() override {
+		    if(mHead == 0) return PushBack(aValue);
+
             ShiftUp(0);
             new(mData) Type(aValue);
             return *mData;
@@ -258,22 +276,20 @@ namespace Solaire{
 
 		// Inherited from List
 
-		Type& SOLAIRE_EXPORT_CALL InsertBefore(const STLIterator<const Type> aPos, const Type& aValue) throw() override {
-            const int32_t pos = aPos - List<Type>::begin();
-            ShiftUp(pos);
-            Type* const ptr = mData + pos;
+		Type& SOLAIRE_EXPORT_CALL InsertBefore(const int32_t aPos, const Type& aValue) throw() override {
+            ShiftUp(aPos);
+            Type* const ptr = mData + aPos;
             new(ptr) Type(aValue);
             return *ptr;
 		}
 
-		Type& SOLAIRE_EXPORT_CALL InsertAfter(const STLIterator<const Type> aPos, const Type& aValue) throw() override {
+		Type& SOLAIRE_EXPORT_CALL InsertAfter(const int32_t aPos, const Type& aValue) throw() override {
             return InsertBefore(aPos - 1, aValue);
 		}
 
-		bool SOLAIRE_EXPORT_CALL Erase(const STLIterator<const Type> aPos) throw() override {
-		    const int32_t pos = aPos - List<Type>::begin();
-            mData[pos].~Type();
-            return ShiftDown(pos);
+		bool SOLAIRE_EXPORT_CALL Erase(const int32_t aPos) throw() override {
+            mData[aPos].~Type();
+            return ShiftDown(aPos);
 		}
 
 	};
