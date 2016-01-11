@@ -284,7 +284,7 @@ namespace Solaire{
 		}
 
 		Type& SOLAIRE_EXPORT_CALL InsertAfter(const int32_t aPos, const Type& aValue) throw() override {
-            return InsertBefore(aPos - 1, aValue);
+            return InsertBefore(aPos + 1, aValue);
 		}
 
 		bool SOLAIRE_EXPORT_CALL Erase(const int32_t aPos) throw() override {
