@@ -49,26 +49,26 @@ namespace Solaire {
     protected:
         // Inherited from Container
 
-        T* SOLAIRE_EXPORT_CALL GetPtr(int32_t aOffset) throw() {
+        T* SOLAIRE_EXPORT_CALL getPtr(int32_t aOffset) throw() {
             return mData + aOffset;
         }
 
-        SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Begin() throw() {
-            return mAllocator->SharedAllocate<ContiguousIterator<T>>(*mAllocator, mData, 0);
+        SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL begin_() throw() {
+            return mAllocator->sharedAllocate<ContiguousIterator<T>>(*mAllocator, mData, 0);
         }
 
-        SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL End() throw() {
-            return mAllocator->SharedAllocate<ContiguousIterator<T>>(*mAllocator, mData, mSize);
+        SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL end_() throw() {
+            return mAllocator->sharedAllocate<ContiguousIterator<T>>(*mAllocator, mData, mSize);
         }
 
-        SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Rbegin() throw() {
+        SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL rbegin_() throw() {
             //! \todo Implement reverse iterator
-            return mAllocator->SharedAllocate<ContiguousIterator<T>>(*mAllocator, mData, 0);
+            return mAllocator->sharedAllocate<ContiguousIterator<T>>(*mAllocator, mData, 0);
         }
 
-        SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Rend() throw() {
+        SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL rend_() throw() {
             //! \todo Implement reverse iterator
-            return mAllocator->SharedAllocate<ContiguousIterator<T>>(*mAllocator, mData, mSize);
+            return mAllocator->sharedAllocate<ContiguousIterator<T>>(*mAllocator, mData, mSize);
         }
 
     public:
@@ -83,15 +83,15 @@ namespace Solaire {
 
         // Inherited from Container
 
-        bool SOLAIRE_EXPORT_CALL IsContiguous() const throw() {
+        bool SOLAIRE_EXPORT_CALL isContiguous() const throw() {
             return true;
         }
 
-        int32_t SOLAIRE_EXPORT_CALL Size() const throw() {
+        int32_t SOLAIRE_EXPORT_CALL size() const throw() {
             return mSize;
         }
 
-        Allocator& SOLAIRE_EXPORT_CALL GetAllocator() const throw() {
+        Allocator& SOLAIRE_EXPORT_CALL getAllocator() const throw() {
             return *mAllocator;
         }
 

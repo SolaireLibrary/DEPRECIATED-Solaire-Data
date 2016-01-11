@@ -53,29 +53,29 @@ namespace Solaire {
 
         // Inherited from Iterator
 
-        Iterator<T>& SOLAIRE_EXPORT_CALL Increment(int32_t aOffset) throw() {
+        Iterator<T>& SOLAIRE_EXPORT_CALL increment(int32_t aOffset) throw() {
             mOffset += aOffset;
             return *this;
         }
 
-        Iterator<T>& SOLAIRE_EXPORT_CALL Decrement(int32_t aOffset) throw() {
+        Iterator<T>& SOLAIRE_EXPORT_CALL decrement(int32_t aOffset) throw() {
             mOffset -= aOffset;
             return *this;
         }
 
-        SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Copy() const throw() {
+        SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL copy() const throw() {
             //! \todo SharedAllocate
             return SharedAllocation<Iterator<T>>(
                 *mAllocator,
-                new(mAllocator->Allocate(sizeof(ContiguousIterator<T>))) ContiguousIterator<T>(*mAllocator, mBase, mOffset)
+                new(mAllocator->allocate(sizeof(ContiguousIterator<T>))) ContiguousIterator<T>(*mAllocator, mBase, mOffset)
             );
         }
 
-        int32_t SOLAIRE_EXPORT_CALL GetOffset() const throw() {
+        int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() {
             return mOffset;
         }
 
-        T* SOLAIRE_EXPORT_CALL GetPtr() throw() {
+        T* SOLAIRE_EXPORT_CALL getPtr() throw() {
             return mBase + mOffset;
         }
 
