@@ -84,13 +84,28 @@ namespace Solaire{
         }
 
         bool ShiftUp(const int32_t aIndex) throw() {
-            //! Implement ShiftUp
-            return false;
+            if(mHead + 1 >= mSize) Reallocate(mSize * 2);
+            const int32_t head = mHead - 1;
+            new(mHead) Type(std::move(mData[mHead - 1]));
+            for(int32_t i = mHead; i >= aIndex; --i) {
+                Type& high = mHead[i];
+                Type& low = mHead[i - 1];
+                high = std::move(low);
+            }
+            ++mHead;
+            return true;
         }
 
         bool ShiftDown(const int32_t aIndex) throw() {
-            //! Implement ShiftDown
-            return false;
+            const int32_t size = mHead - 1;
+            for(int32_t i = mHead; i < size; ++i) {
+                Type& high = mHead[i + 1];
+                Type& low = mHead[i];
+                low = std::move(high);
+            }
+            --mHead;
+            mData[mHead].Type();
+            return true;
         }
 
         bool Reallocate(const Index aSize) throw() {
@@ -191,6 +206,7 @@ namespace Solaire{
         }
 
         // Inherited from StaticContainer
+
         bool SOLAIRE_EXPORT_CALL IsContiguous() const throw() override {
             return true;
         }
@@ -204,6 +220,7 @@ namespace Solaire{
         }
 
         // Inherited from Stack
+
 		Type& SOLAIRE_EXPORT_CALL PushBack(const Type& aValue) throw() override {
 		    if(mHead == mSize) {
                 Reallocate(mSize * 2);
@@ -240,6 +257,7 @@ namespace Solaire{
 		}
 
 		// Inherited from List
+
 		Type& SOLAIRE_EXPORT_CALL InsertBefore(const STLIterator<const Type> aPos, const Type& aValue) throw() override {
             const int32_t pos = aPos - List<Type>::begin();
             ShiftUp(pos);
@@ -253,8 +271,9 @@ namespace Solaire{
 		}
 
 		bool SOLAIRE_EXPORT_CALL Erase(const STLIterator<const Type> aPos) throw() override {
-		    //! \todo implement Erase
-            return false;
+		    const int32_t pos = aPos - List<Type>::begin();
+            mData[pos].~Type();
+            return ShiftDown(pos);
 		}
 
 	};
