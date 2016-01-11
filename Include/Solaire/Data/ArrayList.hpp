@@ -104,16 +104,15 @@ namespace Solaire{
 
         bool ShiftDown(const int32_t aIndex) throw() {
             //std::cout << "ShiftDown" << std::endl;
-            /*const int32_t size = mHead - 1;
-            for(int32_t i = mHead; i < size; ++i) {
-                Type& high = mHead[i + 1];
-                Type& low = mHead[i];
+            const int32_t size = mHead;
+            for(int32_t i = aIndex; i < size; ++i) {
+                Type& high = mData[i + 1];
+                Type& low = mData[i];
                 low = std::move(high);
             }
             --mHead;
-            mData[mHead].Type();
-            return true;*/
-            return false;
+            mData[mHead].~Type();
+            return true;
         }
 
         bool Reallocate(const Index aSize) throw() {
@@ -288,7 +287,6 @@ namespace Solaire{
 		}
 
 		bool SOLAIRE_EXPORT_CALL Erase(const int32_t aPos) throw() override {
-            mData[aPos].~Type();
             return ShiftDown(aPos);
 		}
 
