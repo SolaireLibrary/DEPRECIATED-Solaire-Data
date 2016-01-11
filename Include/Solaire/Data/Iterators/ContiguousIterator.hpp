@@ -42,7 +42,7 @@ namespace Solaire {
         int16_t mOffset;
     public:
         ContiguousIterator(Allocator& aAllocator, T* const aBase, const int32_t aOffset) throw() :
-            mAllocator(aAllocator),
+            mAllocator(&aAllocator),
             mBase(aBase),
             mOffset(aOffset)
         {}
@@ -64,7 +64,11 @@ namespace Solaire {
         }
 
         SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Copy() const throw() {
-            return mAllocator->SharedAllocate<ContiguousIterator<T>>(*mAllocator, mBase, mOffset);
+            //! \todo SharedAllocate
+            return SharedAllocation<Iterator<T>>(
+                *mAllocator,
+                new(mAllocator->Allocate(sizeof(Iterator<T>))) ContiguousIterator<T>(*mAllocator, mBase, mOffset)
+            );
         }
 
         int32_t SOLAIRE_EXPORT_CALL GetOffset() const throw() {

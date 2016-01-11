@@ -135,15 +135,21 @@ namespace Solaire{
         }
 
         SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL Begin() throw() override {
-            //! \todo Implement iterator
-            //return mAllocator->SharedAllocate<ContiguousIterator>(*mAllocator, mData, 0);
-            return SharedAllocation<Iterator<Type>>();
+            //! \todo SharedAllocate
+            //return mAllocator->SharedAllocate<ContiguousIterator<Type>>(*mAllocator, mData, 0);
+            return SharedAllocation<Iterator<Type>>(
+                *mAllocator,
+                new(mAllocator->Allocate(sizeof(Iterator<Type>))) ContiguousIterator<Type>(*mAllocator, mData, 0)
+            );
         }
 
         SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL End() throw() override {
-            //! \todo Implement iterator
+            //! \todo SharedAllocate
             //return mAllocator->SharedAllocate<ContiguousIterator>(*mAllocator, mData, mHead);
-            return SharedAllocation<Iterator<Type>>();
+            return SharedAllocation<Iterator<Type>>(
+                *mAllocator,
+                new(mAllocator->Allocate(sizeof(Iterator<Type>))) ContiguousIterator<Type>(*mAllocator, mData, mHead)
+            );
         }
 
         SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL Rbegin() throw() override {
