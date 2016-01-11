@@ -1,5 +1,5 @@
-#ifndef SOLAIRE_DATA_CONTIGUOUS_ITERATOR_HPP
-#define SOLAIRE_DATA_CONTIGUOUS_ITERATOR_HPP
+#ifndef SOLAIRE_DATA_REVERSE_CONTIGUOUS_ITERATOR_HPP
+#define SOLAIRE_DATA_REVERSE_CONTIGUOUS_ITERATOR_HPP
 
 //Copyright 2015 Adam Smith
 //
@@ -20,7 +20,7 @@
 // GitHub repository : https://github.com/SolaireLibrary/SolaireCPP
 
 /*!
-	\file ContiguousIterator.hpp
+	\file ReverseContiguousIterator.hpp
 	\brief
 	\author
 	Created			: Adam Smith
@@ -35,31 +35,31 @@
 namespace Solaire {
 
 	template<class T>
-    class ContiguousIterator : public Iterator<T> {
+    class ReverseContiguousIterator : public Iterator<T> {
     private:
         Allocator* mAllocator;
         T* mBase;
         int16_t mOffset;
     public:
-        ContiguousIterator(Allocator& aAllocator, T* const aBase, const int32_t aOffset) throw() :
+        ReverseContiguousIterator(Allocator& aAllocator, T* const aBase, const int32_t aOffset) throw() :
             mAllocator(&aAllocator),
             mBase(aBase),
             mOffset(aOffset)
         {}
 
-        SOLAIRE_EXPORT_CALL ~ContiguousIterator() throw() {
+        SOLAIRE_EXPORT_CALL ~ReverseContiguousIterator() throw() {
 
         }
 
         // Inherited from Iterator
 
         Iterator<T>& SOLAIRE_EXPORT_CALL Increment(int32_t aOffset) throw() {
-            mOffset += aOffset;
+            mOffset -= aOffset;
             return *this;
         }
 
         Iterator<T>& SOLAIRE_EXPORT_CALL Decrement(int32_t aOffset) throw() {
-            mOffset -= aOffset;
+            mOffset += aOffset;
             return *this;
         }
 
@@ -67,7 +67,7 @@ namespace Solaire {
             //! \todo SharedAllocate
             return SharedAllocation<Iterator<T>>(
                 *mAllocator,
-                new(mAllocator->Allocate(sizeof(ContiguousIterator<T>))) ContiguousIterator<T>(*mAllocator, mBase, mOffset)
+                new(mAllocator->Allocate(sizeof(ReverseContiguousIterator<T>))) ReverseContiguousIterator<T>(*mAllocator, mBase, mOffset)
             );
         }
 

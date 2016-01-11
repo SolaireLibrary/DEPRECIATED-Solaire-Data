@@ -33,6 +33,7 @@
 #include <cstdint>
 #include "Solaire/Core/Container.hpp"
 #include "Solaire/Data/Iterators/ContiguousIterator.hpp"
+#include "Solaire/Data/Iterators/ReverseContiguousIterator.hpp"
 
 namespace Solaire{
 
@@ -139,7 +140,7 @@ namespace Solaire{
             //return mAllocator->SharedAllocate<ContiguousIterator<Type>>(*mAllocator, mData, 0);
             return SharedAllocation<Iterator<Type>>(
                 *mAllocator,
-                new(mAllocator->Allocate(sizeof(Iterator<Type>))) ContiguousIterator<Type>(*mAllocator, mData, 0)
+                new(mAllocator->Allocate(sizeof(ContiguousIterator<Type>))) ContiguousIterator<Type>(*mAllocator, mData, 0)
             );
         }
 
@@ -148,18 +149,24 @@ namespace Solaire{
             //return mAllocator->SharedAllocate<ContiguousIterator>(*mAllocator, mData, mHead);
             return SharedAllocation<Iterator<Type>>(
                 *mAllocator,
-                new(mAllocator->Allocate(sizeof(Iterator<Type>))) ContiguousIterator<Type>(*mAllocator, mData, mHead)
+                new(mAllocator->Allocate(sizeof(ContiguousIterator<Type>))) ContiguousIterator<Type>(*mAllocator, mData, mHead)
             );
         }
 
         SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL Rbegin() throw() override {
-            //! \todo Implement reverse iterator
-            return SharedAllocation<Iterator<Type>>();
+            //! \todo SharedAllocate
+            return SharedAllocation<Iterator<Type>>(
+                *mAllocator,
+                new(mAllocator->Allocate(sizeof(ReverseContiguousIterator<Type>))) ReverseContiguousIterator<Type>(*mAllocator, mData, mHead - 1)
+            );
         }
 
         SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL Rend() throw() override {
-            //! \todo Implement reverse iterator
-            return SharedAllocation<Iterator<Type>>();
+            //! \todo SharedAllocate
+            return SharedAllocation<Iterator<Type>>(
+                *mAllocator,
+                new(mAllocator->Allocate(sizeof(ReverseContiguousIterator<Type>))) ReverseContiguousIterator<Type>(*mAllocator, mData, -1)
+            );
         }
 
     public:
