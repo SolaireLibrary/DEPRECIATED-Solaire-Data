@@ -83,6 +83,16 @@ namespace Solaire{
             return true;
         }
 
+        bool ShiftUp(const int32_t aIndex) throw() {
+            //! Implement ShiftUp
+            return false;
+        }
+
+        bool ShiftDown(const int32_t aIndex) throw() {
+            //! Implement ShiftDown
+            return false;
+        }
+
         bool Reallocate(const Index aSize) throw() {
             Type* const ptr = static_cast<Type*>(mAllocator->Allocate(sizeof(Type) * aSize));
             if(! MoveTo(ptr)) {
@@ -215,13 +225,38 @@ namespace Solaire{
         }
 
         // Inherited from Deque
-		virtual TYPE& SOLAIRE_EXPORT_CALL PushFront(const TYPE&) throw() = 0;
-		virtual TYPE SOLAIRE_EXPORT_CALL PopFront() throw() = 0;
+		Type& SOLAIRE_EXPORT_CALL PushFront(const Type& aValue) throw() override {
+            ShiftUp(0);
+            new(mData) Type(aValue);
+            return *mData;
+		}
+
+		Type SOLAIRE_EXPORT_CALL PopFront() throw() override {
+		    Type& front = *mData;
+            Type tmp = front;
+            front.~Type();
+            ShiftDown(0);
+            return tmp;
+		}
 
 		// Inherited from List
-		virtual TYPE& SOLAIRE_EXPORT_CALL InsertBefore(const STLIterator<const TYPE>, const TYPE&) throw() = 0;
-		virtual TYPE& SOLAIRE_EXPORT_CALL InsertAfter(const STLIterator<const TYPE>, const TYPE&) throw() = 0;
-		virtual bool SOLAIRE_EXPORT_CALL Erase(const STLIterator<const TYPE>) throw() = 0;
+		Type& SOLAIRE_EXPORT_CALL InsertBefore(const STLIterator<const Type> aPos, const Type& aValue) throw() override {
+            const int32_t pos = aPos - List<Type>::begin();
+            ShiftUp(pos);
+            Type* const ptr = mData + pos;
+            new(ptr) Type(aValue);
+            return *ptr;
+		}
+
+		Type& SOLAIRE_EXPORT_CALL InsertAfter(const STLIterator<const Type> aPos, const Type& aValue) throw() override {
+            return InsertBefore(aPos - 1, aValue);
+		}
+
+		bool SOLAIRE_EXPORT_CALL Erase(const STLIterator<const Type> aPos) throw() override {
+		    //! \todo implement Erase
+            return false;
+		}
+
 	};
 }
 
