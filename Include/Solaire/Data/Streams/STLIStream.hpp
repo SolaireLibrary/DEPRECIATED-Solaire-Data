@@ -142,6 +142,8 @@ namespace Solaire {
 
     };
 
+    static STLIStream STD_IN(std::cin);
+
 }
 
 #endif
