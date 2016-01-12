@@ -34,7 +34,7 @@
 
 namespace Solaire{
 
-	class CString : public List<char> {
+	class CString : public String {
 	public:
 		typedef char Type;
 		typedef const char ConstType;
