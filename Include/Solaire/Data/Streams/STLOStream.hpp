@@ -119,6 +119,9 @@ namespace Solaire {
 
     static STLOStream STD_OUT(std::cout);
     static STLOStream STD_ERR(std::cerr);
+   enum : char {
+       END_LINE = '\n'
+   };
 
 }
 
