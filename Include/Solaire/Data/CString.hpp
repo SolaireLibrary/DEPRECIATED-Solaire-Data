@@ -34,20 +34,19 @@
 
 namespace Solaire{
 
-    template<class TYPE, const TYPE TERMINATOR = '\0', class INDEX = uint16_t>
-	class CString : public List<TYPE> {
+	class CString : public List<char> {
 	public:
-		typedef TYPE Type;
-		typedef const TYPE ConstType;
+		typedef char Type;
+		typedef const char ConstType;
 		typedef Type& Reference;
 		typedef ConstType& ConstReference;
 		typedef Type&& Move;
 		typedef Type* Pointer;
 		typedef ConstType* ConstPointer;
-		typedef INDEX Index;
-		typedef CString<TYPE, TERMINATOR, INDEX> Self;
+		typedef uint32_t Index;
+		typedef CString Self;
 	private:
-	    ArrayList<TYPE, INDEX> mData;
+	    ArrayList<char, uint32_t> mData;
     protected:
         // Inherited from StaticContainer
 
@@ -61,13 +60,13 @@ namespace Solaire{
 
         SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL end_() throw() override {
             SharedAllocation<Iterator<Type>> tmp = mData.begin_();
-            --tmp;
+            tmp->decrement(1);
             return tmp;
         }
 
         SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL rbegin_() throw() override {
             SharedAllocation<Iterator<Type>> tmp = mData.rbegin_();
-            ++tmp;
+            tmp->increment(1);
             return tmp;
         }
 
@@ -85,12 +84,28 @@ namespace Solaire{
         {}
 
         CString(const Self& aOther) :
-            mData(aOther)
+            mData(aOther.mData)
         {}
 
         CString(Self&& aOther) :
             mData(std::move(aOther.mData))
         {}
+
+        template<size_t LENGTH>
+        CString(const Type(&aString)[LENGTH]) :
+            mData(DEFAULT_ALLOCATOR, LENGTH)
+        {
+            std::memcpy(mData.getPtr(0), aString, LENGTH);
+            mData.mHead = LENGTH;
+        }
+
+        template<size_t LENGTH>
+        CString(Allocator& aAllocator, const Type(&aString)[LENGTH]) :
+            mData(aAllocator, LENGTH)
+        {
+            std::strcpy(mData.getPtr(0), aString, LENGTH);
+            mData.mHead = LENGTH;
+        }
 
         SOLAIRE_EXPORT_CALL ~CString() {
 
@@ -123,8 +138,9 @@ namespace Solaire{
         // Inherited from Stack
 
 		Type& SOLAIRE_EXPORT_CALL pushBack(const Type& aValue) throw() override {
-            Type& ref = pushBack.back() = aValue;
-            mData.pushBack(TERMINATOR);
+            //Type& ref = mData.back() = aValue;
+            Type& ref = mData[mData.size() - 1] = aValue;
+            mData.pushBack('\0');
             return ref;
         }
 
@@ -134,7 +150,7 @@ namespace Solaire{
 
 		void SOLAIRE_EXPORT_CALL clear() throw() override {
             mData.clear();
-            mData.pushBack(TERMINATOR);
+            mData.pushBack('\0');
         }
 
         // Inherited from Deque
@@ -144,7 +160,7 @@ namespace Solaire{
 		}
 
 		Type SOLAIRE_EXPORT_CALL popFront() throw() override {
-		    return mData.size() == 1 ? TERMINATOR : mData.popFront();
+		    return mData.size() == 1 ? '\0' : mData.popFront();
 		}
 
 		// Inherited from List

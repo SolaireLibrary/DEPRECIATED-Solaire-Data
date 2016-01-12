@@ -53,6 +53,8 @@ namespace Solaire{
 		typedef ConstType* ConstPointer;
 		typedef INDEX Index;
 		typedef ArrayList<TYPE, INDEX> Self;
+
+        friend class CString;
 	private:
         Allocator* mAllocator;
 		Index mHead;
@@ -195,9 +197,9 @@ namespace Solaire{
             mAllocator(aOther.mAllocator),
             mHead(aOther.mHead),
             mSize(aOther.mSize),
-            mData(static_cast<Type*>(aOther.mAllocator->Allocate(sizeof(Type) * aOther.mSize)))
+            mData(static_cast<Type*>(aOther.mAllocator->allocate(sizeof(Type) * aOther.mSize)))
         {
-            aOther.CopyTo(mData);
+            aOther.copyTo(mData);
         }
 
         ArrayList(Self&& aOther) :
