@@ -30,7 +30,7 @@
 	Last Modified	: 12th January 2016
 */
 
-#include <iostream>
+#include <istream>
 #include "Solaire/Core/IStream.hpp"
 
 namespace Solaire {
