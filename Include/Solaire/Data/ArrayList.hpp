@@ -170,6 +170,13 @@ namespace Solaire{
         }
 
     public:
+        ArrayList() :
+            mAllocator(&DEFAULT_ALLOCATOR),
+            mHead(0),
+            mSize(DEFAULT_ARRAY_LIST_SIZE),
+            mData(static_cast<Type*>(DEFAULT_ALLOCATOR.allocate(sizeof(Type) * DEFAULT_ARRAY_LIST_SIZE)))
+        {}
+
         ArrayList(Allocator& aAllocator) :
             mAllocator(&aAllocator),
             mHead(0),

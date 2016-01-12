@@ -76,6 +76,10 @@ namespace Solaire{
         }
 
     public:
+        CString() :
+            mData()
+        {}
+
         CString(Allocator& aAllocator) :
             mData(aAllocator)
         {}
