@@ -20,7 +20,7 @@
 // GitHub repository : https://github.com/SolaireLibrary/SolaireCPP
 
 /*!
-	\file ComtaomerIStream.hpp
+	\file ContainerIStream.hpp
 	\brief
 	\author
 	Created			: Adam Smith
@@ -35,7 +35,7 @@
 
 namespace Solaire {
 
-	SOLAIRE_EXPORT_INTERFACE ContainerIStream : public IStream {
+	class ContainerIStream : public IStream {
     private:
         StaticContainer<uint8_t>& mContainer;
         int32_t mOffset;

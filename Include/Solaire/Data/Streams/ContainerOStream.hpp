@@ -36,7 +36,7 @@
 
 namespace Solaire {
 
-	SOLAIRE_EXPORT_INTERFACE ContainerOStream : public OStream {
+	class ContainerOStream : public OStream {
     private:
         Stack<uint8_t>& mContainer;
         int32_t mOffset;
