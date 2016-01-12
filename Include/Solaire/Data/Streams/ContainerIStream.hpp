@@ -40,7 +40,7 @@ namespace Solaire {
         StaticContainer<uint8_t>& mContainer;
         int32_t mOffset;
     private:
-        void SOLAIRE_EXPORT_CALL read_(void* const aPtr, const uint32_t aBytes) throw() {
+        void read_(void* const aPtr, const uint32_t aBytes) throw() {
             uint8_t* const ptr = static_cast<uint8_t*>(aPtr);
             for(uint32_t i = 0; i < aBytes; ++i) {
                 ptr[i] = mContainer[mOffset++];
