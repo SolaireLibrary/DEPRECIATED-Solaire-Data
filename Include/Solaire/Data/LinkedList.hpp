@@ -413,8 +413,9 @@ namespace Solaire{
 		    before->Next = n;
 		    if(! after) after->Previous = n;
 
-		    if(before == mFront) mFront = n;
-		    if(after == mBack) mBack = n;
+            //! \todo Preserve mFront / mBack
+		    //if(before == mFront) mFront = n;
+		    //if(after == mBack) mBack = n;
 
 		    ++mSize;
 
@@ -431,11 +432,12 @@ namespace Solaire{
 		    SharedAllocation<LinkedNode<TYPE>> before = n->Previous;
 		    SharedAllocation<LinkedNode<TYPE>> after = n->Next;
 
-		    if(! before) before->Next = after;
-		    if(! after) after->Previous = before;
+		    if(before) before->Next = after;
+		    if(after) after->Previous = before;
 
-		    if(mFront == n) mFront = after;
-		    if(mBack == n) mBack = before;
+            //! \todo Preserve mFront / mBack
+		    //if(mFront == n) mFront = after;
+		    //if(mBack == n) mBack = before;
 
             --mSize;
 
