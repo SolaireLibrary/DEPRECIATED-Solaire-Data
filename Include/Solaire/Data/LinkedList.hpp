@@ -413,9 +413,8 @@ namespace Solaire{
 		    before->Next = n;
 		    if(! after) after->Previous = n;
 
-            //! \todo Preserve mFront / mBack
-		    //if(before == mFront) mFront = n;
-		    //if(after == mBack) mBack = n;
+		    if(before == mFront) mFront = n;
+		    if(after == mBack) mBack = n;
 
 		    ++mSize;
 
@@ -435,9 +434,8 @@ namespace Solaire{
 		    if(before) before->Next = after;
 		    if(after) after->Previous = before;
 
-            //! \todo Preserve mFront / mBack
-		    //if(mFront == n) mFront = after;
-		    //if(mBack == n) mBack = before;
+		    if(mFront == n) mFront = after;
+		    if(mBack == n) mBack = before;
 
             --mSize;
 
