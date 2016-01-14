@@ -53,10 +53,12 @@ namespace Solaire{
     private:
         Allocator* mAllocator;
         SharedAllocation<LinkedNode<T>> mNode;
+        bool mEnd;
     public:
-        LinkedListIterator(Allocator& aAllocator, SharedAllocation<LinkedNode<T>> aNode) throw() :
+        LinkedListIterator(Allocator& aAllocator, SharedAllocation<LinkedNode<T>> aNode, bool aEnd = false) throw() :
             mAllocator(&aAllocator),
-            mNode(aNode)
+            mNode(aNode),
+            mEnd(aEnd)
         {}
 
         SOLAIRE_EXPORT_CALL ~LinkedListIterator() throw() {
@@ -66,21 +68,30 @@ namespace Solaire{
         // Inherited from Iterator
 
         Iterator<T>& SOLAIRE_EXPORT_CALL increment(int32_t aOffset) throw() {
-            while(aOffset != 0) {
-                if(mNode == nullptr) break;
-                if(mNode->Next == nullptr) break;
-                mNode = mNode->Next;
-                --aOffset;
+            if(! mEnd) {
+                while(aOffset != 0) {
+                    if(mNode == nullptr) break;
+                    if(mNode->Next == nullptr) {
+                        mEnd = true;
+                        return *this;
+                    }
+                    mNode = mNode->Next;
+                    --aOffset;
+                }
             }
             return *this;
         }
 
         Iterator<T>& SOLAIRE_EXPORT_CALL decrement(int32_t aOffset) throw() {
-            while(aOffset != 0) {
-                if(mNode == nullptr) break;
-                if(mNode->Previous == nullptr) break;
-                mNode = mNode->Previous;
-                --aOffset;
+            if(mEnd){
+                mEnd = false;
+            }else {
+                while(aOffset != 0) {
+                    if(mNode == nullptr) break;
+                    if(mNode->Previous == nullptr) break;
+                    mNode = mNode->Previous;
+                    --aOffset;
+                }
             }
             return *this;
         }
@@ -89,7 +100,7 @@ namespace Solaire{
             //! \todo SharedAllocate
             return SharedAllocation<Iterator<T>>(
                 *mAllocator,
-                new(mAllocator->allocate(sizeof(LinkedListIterator<T>))) LinkedListIterator<T>(*mAllocator, mNode)
+                new(mAllocator->allocate(sizeof(LinkedListIterator<T>))) LinkedListIterator<T>(*mAllocator, mNode, mEnd)
             );
         }
 
@@ -100,7 +111,7 @@ namespace Solaire{
                 n = n->Previous;
                 ++offset;
             }
-            return offset;
+            return mEnd ? offset + 1 : offset;
         }
 
         T* SOLAIRE_EXPORT_CALL getPtr() throw() {
@@ -113,10 +124,12 @@ namespace Solaire{
     private:
         Allocator* mAllocator;
         SharedAllocation<LinkedNode<T>> mNode;
+        bool mEnd;
     public:
-        ReverseLinkedListIterator(Allocator& aAllocator, SharedAllocation<LinkedNode<T>> aNode) throw() :
+        ReverseLinkedListIterator(Allocator& aAllocator, SharedAllocation<LinkedNode<T>> aNode, bool aEnd = false) throw() :
             mAllocator(&aAllocator),
-            mNode(aNode)
+            mNode(aNode),
+            mEnd(aEnd)
         {}
 
         SOLAIRE_EXPORT_CALL ~ReverseLinkedListIterator() throw() {
@@ -126,21 +139,30 @@ namespace Solaire{
         // Inherited from Iterator
 
         Iterator<T>& SOLAIRE_EXPORT_CALL increment(int32_t aOffset) throw() {
-            while(aOffset != 0) {
-                if(mNode == nullptr) break;
-                if(mNode->Previous == nullptr) break;
-                mNode = mNode->Previous;
-                --aOffset;
+            if(! mEnd) {
+                while(aOffset != 0) {
+                    if(mNode == nullptr) break;
+                    if(mNode->Previous == nullptr) {
+                        mEnd = true;
+                        return *this;
+                    }
+                    mNode = mNode->Previous;
+                    --aOffset;
+                }
             }
             return *this;
         }
 
         Iterator<T>& SOLAIRE_EXPORT_CALL decrement(int32_t aOffset) throw() {
-            while(aOffset != 0) {
-                if(mNode == nullptr) break;
-                if(mNode->Next == nullptr) break;
-                mNode = mNode->Next;
-                --aOffset;
+            if(mEnd) {
+                mEnd = false;
+            }else {
+                while(aOffset != 0) {
+                    if(mNode == nullptr) break;
+                    if(mNode->Previous == nullptr) break;
+                    mNode = mNode->Next;
+                    --aOffset;
+                }
             }
             return *this;
         }
@@ -149,7 +171,7 @@ namespace Solaire{
             //! \todo SharedAllocate
             return SharedAllocation<Iterator<T>>(
                 *mAllocator,
-                new(mAllocator->allocate(sizeof(ReverseLinkedListIterator<T>))) ReverseLinkedListIterator<T>(*mAllocator, mNode)
+                new(mAllocator->allocate(sizeof(ReverseLinkedListIterator<T>))) ReverseLinkedListIterator<T>(*mAllocator, mNode, mEnd)
             );
         }
 
@@ -160,7 +182,7 @@ namespace Solaire{
                 n = n->Next;
                 ++offset;
             }
-            return offset;
+            return  mEnd ? offset + 1 : offset;
         }
 
         T* SOLAIRE_EXPORT_CALL getPtr() throw() {
@@ -210,7 +232,11 @@ namespace Solaire{
         }
 
         SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL end_() throw() override {
-            //! \todo Implement end_
+            //! \todo SharedAllocate
+            return SharedAllocation<Iterator<Type>>(
+                *mAllocator,
+                new(mAllocator->allocate(sizeof(LinkedListIterator<Type>))) LinkedListIterator<Type>(*mAllocator, mBack, true)
+            );
         }
 
         SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL rbegin_() throw() override {
@@ -222,7 +248,11 @@ namespace Solaire{
         }
 
         SharedAllocation<Iterator<Type>> SOLAIRE_EXPORT_CALL rend_() throw() override {
-            //! \todo Implement rend_
+            //! \todo SharedAllocate
+            return SharedAllocation<Iterator<Type>>(
+                *mAllocator,
+                new(mAllocator->allocate(sizeof(LinkedListIterator<Type>))) ReverseLinkedListIterator<Type>(*mAllocator, mFront, true)
+            );
         }
 
     public:
