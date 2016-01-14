@@ -70,6 +70,7 @@ namespace Solaire{
                 if(mNode == nullptr) break;
                 if(mNode->Next == nullptr) break;
                 mNode = mNode->Next;
+                --aOffset;
             }
             return *this;
         }
@@ -79,6 +80,7 @@ namespace Solaire{
                 if(mNode == nullptr) break;
                 if(mNode->Previous == nullptr) break;
                 mNode = mNode->Previous;
+                --aOffset;
             }
             return *this;
         }
@@ -128,6 +130,7 @@ namespace Solaire{
                 if(mNode == nullptr) break;
                 if(mNode->Previous == nullptr) break;
                 mNode = mNode->Previous;
+                --aOffset;
             }
             return *this;
         }
@@ -137,6 +140,7 @@ namespace Solaire{
                 if(mNode == nullptr) break;
                 if(mNode->Next == nullptr) break;
                 mNode = mNode->Next;
+                --aOffset;
             }
             return *this;
         }
