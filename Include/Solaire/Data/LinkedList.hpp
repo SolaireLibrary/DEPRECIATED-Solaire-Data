@@ -403,6 +403,8 @@ namespace Solaire{
 		// Inherited from List
 
 		Type& SOLAIRE_EXPORT_CALL insertBefore(const int32_t aPos, const Type& aValue) throw() override {
+		    if(aPos == 0) return pushFront(aValue);
+		    if(aPos == mSize) return pushBack(aValue);
 		    SharedAllocation<LinkedNode<TYPE>> before = getNode(aPos)->Previous;
 		    if(! before) return before->Value;
 		    SharedAllocation<LinkedNode<TYPE>> after = before->Next;
@@ -412,9 +414,6 @@ namespace Solaire{
 		    n->Next = after;
 		    before->Next = n;
 		    if(! after) after->Previous = n;
-
-		    if(before == mFront) mFront = n;
-		    if(after == mBack) mBack = n;
 
 		    ++mSize;
 
@@ -434,8 +433,8 @@ namespace Solaire{
 		    if(before) before->Next = after;
 		    if(after) after->Previous = before;
 
-		    if(mFront == n) mFront = after;
-		    if(mBack == n) mBack = before;
+		    if(aPos == 0) mFront = after;
+		    if(aPos == mSize - 1) mBack = before;
 
             --mSize;
 
