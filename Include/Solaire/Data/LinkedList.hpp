@@ -70,8 +70,8 @@ namespace Solaire{
         Iterator<T>& SOLAIRE_EXPORT_CALL increment(int32_t aOffset) throw() {
             if(! mEnd) {
                 while(aOffset != 0) {
-                    if(mNode == nullptr) break;
-                    if(mNode->Next == nullptr) {
+                    if(! mNode) break;
+                    if(! mNode->Next) {
                         mEnd = true;
                         return *this;
                     }
@@ -87,8 +87,8 @@ namespace Solaire{
                 mEnd = false;
             }else {
                 while(aOffset != 0) {
-                    if(mNode == nullptr) break;
-                    if(mNode->Previous == nullptr) break;
+                    if(! mNode) break;
+                    if(! mNode->Previous) break;
                     mNode = mNode->Previous;
                     --aOffset;
                 }
@@ -107,7 +107,7 @@ namespace Solaire{
         int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() {
             int32_t offset = 0;
             SharedAllocation<LinkedNode<T>> n = mNode;
-            while(n != nullptr) {
+            while(! n) {
                 n = n->Previous;
                 ++offset;
             }
@@ -115,7 +115,7 @@ namespace Solaire{
         }
 
         T* SOLAIRE_EXPORT_CALL getPtr() throw() {
-            return mNode == nullptr ? nullptr : &mNode->Value;
+            return mNode ? &mNode->Value : nullptr;
         }
     };
 
@@ -141,8 +141,8 @@ namespace Solaire{
         Iterator<T>& SOLAIRE_EXPORT_CALL increment(int32_t aOffset) throw() {
             if(! mEnd) {
                 while(aOffset != 0) {
-                    if(mNode == nullptr) break;
-                    if(mNode->Previous == nullptr) {
+                    if(! mNode) break;
+                    if(! mNode->Previous) {
                         mEnd = true;
                         return *this;
                     }
@@ -158,8 +158,8 @@ namespace Solaire{
                 mEnd = false;
             }else {
                 while(aOffset != 0) {
-                    if(mNode == nullptr) break;
-                    if(mNode->Previous == nullptr) break;
+                    if(! mNode) break;
+                    if(! mNode->Previous) break;
                     mNode = mNode->Next;
                     --aOffset;
                 }
@@ -178,7 +178,7 @@ namespace Solaire{
         int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() {
             int32_t offset = 0;
             SharedAllocation<LinkedNode<T>> n = mNode;
-            while(n != nullptr) {
+            while(! n) {
                 n = n->Next;
                 ++offset;
             }
@@ -186,7 +186,7 @@ namespace Solaire{
         }
 
         T* SOLAIRE_EXPORT_CALL getPtr() throw() {
-            return mNode == nullptr ? nullptr : &mNode->Value;
+            return mNode ? &mNode->Value : nullptr;
         }
     };
 
@@ -210,7 +210,7 @@ namespace Solaire{
         SharedAllocation<LinkedNode<TYPE>> getNode(int32_t aOffset) throw() {
             SharedAllocation<LinkedNode<TYPE>> n = mFront;
             while(aOffset != 0) {
-                if(n == nullptr) break;
+                if(! n) break;
                 n = n->Next;
                 --aOffset;
             }
@@ -336,7 +336,7 @@ namespace Solaire{
 
 		Type& SOLAIRE_EXPORT_CALL pushBack(const Type& aValue) throw() override {
 		    SharedAllocation<LinkedNode<TYPE>> n = mAllocator->sharedAllocate<LinkedNode<TYPE>>(aValue);
-            if(mBack == nullptr) {
+            if(! mBack) {
                 mFront = n;
                 mBack = n;
             }else{
@@ -373,7 +373,7 @@ namespace Solaire{
 
 		Type& SOLAIRE_EXPORT_CALL pushFront(const Type& aValue) throw() override {
 		    SharedAllocation<LinkedNode<TYPE>> n = mAllocator->sharedAllocate<LinkedNode<TYPE>>(aValue);
-            if(mFront == nullptr) {
+            if(! mFront) {
                 mFront = n;
                 mBack = n;
             }else{
@@ -404,14 +404,14 @@ namespace Solaire{
 
 		Type& SOLAIRE_EXPORT_CALL insertBefore(const int32_t aPos, const Type& aValue) throw() override {
 		    SharedAllocation<LinkedNode<TYPE>> before = getNode(aPos)->Previous;
-		    if(before == nullptr) return aValue;
+		    if(! before) return before->Value;
 		    SharedAllocation<LinkedNode<TYPE>> after = before->Next;
 		    SharedAllocation<LinkedNode<TYPE>> n = mAllocator->sharedAllocate<LinkedNode<TYPE>>(aValue);
 
 		    n->Previous = before;
 		    n->Next = after;
 		    before->Next = n;
-		    if(after != nullptr) after->Previous = n;
+		    if(! after) after->Previous = n;
 
 		    if(before == mFront) mFront = n;
 		    if(after == mBack) mBack = n;
@@ -427,12 +427,12 @@ namespace Solaire{
 
 		bool SOLAIRE_EXPORT_CALL erase(const int32_t aPos) throw() override {
 		    SharedAllocation<LinkedNode<TYPE>> n = getNode(aPos);
-		    if(n == nullptr) return false;
+		    if(! n) return false;
 		    SharedAllocation<LinkedNode<TYPE>> before = n->Previous;
 		    SharedAllocation<LinkedNode<TYPE>> after = n->Next;
 
-		    if(before != nullptr) before->Next = after;
-		    if(after != nullptr) after->Previous = before;
+		    if(! before) before->Next = after;
+		    if(! after) after->Previous = before;
 
 		    if(mFront == n) mFront = after;
 		    if(mBack == n) mBack = before;
