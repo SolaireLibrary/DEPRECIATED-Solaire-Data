@@ -30,11 +30,12 @@
 	Last Modified	: 12th January 2016
 */
 
+#include "Solaire/Core/String.hpp"
 #include "Solaire/Data/ArrayList.hpp"
 
 namespace Solaire{
 
-	class CString : public String {
+	class CString : public String<char> {
 	public:
 		typedef char Type;
 		typedef const char ConstType;
