@@ -108,6 +108,19 @@ namespace Solaire{
             mData.mHead = LENGTH;
         }
 
+        CString(const StringConstant<char>& aOther) :
+            mData(DEFAULT_ALLOCATOR, aOther.size() + 1)
+        {
+            const int32_t size = aOther.size();
+            if(aOther.isContiguous()) {
+                std::memcpy(mData.getPtr(0), &aOther[0], size);
+            }else {
+                for(int32_t i = 0; i < size; ++i) mData[i] = aOther[0];
+            }
+            mData[size] = '\0';
+            mData.mHead = size + 1;
+        }
+
         SOLAIRE_EXPORT_CALL ~CString() {
 
         }

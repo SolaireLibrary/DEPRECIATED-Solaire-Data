@@ -31,6 +31,7 @@
 */
 
 #include <cstdint>
+#include "Solaire/Core/NewAllocator.hpp"
 #include "Solaire/Core/Container.hpp"
 #include "Solaire/Data/Iterators/ContiguousIterator.hpp"
 #include "Solaire/Data/Iterators/ReverseContiguousIterator.hpp"
