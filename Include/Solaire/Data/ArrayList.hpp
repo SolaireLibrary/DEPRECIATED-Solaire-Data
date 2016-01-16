@@ -212,6 +212,16 @@ namespace Solaire{
             aOther.mData = nullptr;
         }
 
+        ArrayList(const StaticContainer<const Type>& aOther) :
+            mAllocator(&aOther.getAllocator()),
+            mHead(0),
+            mSize(DEFAULT_ARRAY_LIST_SIZE),
+            mData(static_cast<Type*>(DEFAULT_ALLOCATOR.allocate(sizeof(Type) *DEFAULT_ARRAY_LIST_SIZE)))
+        {
+            const auto end = aOther.end();
+            for(auto i = aOther.begin(); i != end; ++i) pushBack(*i);
+        }
+
         SOLAIRE_EXPORT_CALL ~ArrayList() {
             if(mData != nullptr) {
                 clear();

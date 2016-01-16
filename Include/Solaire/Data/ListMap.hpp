@@ -55,6 +55,14 @@ namespace Solaire {
 	        mEntries(aAllocator)
         {}
 
+	    ListMap(const Map<K,T>& aOther) :
+	        mEntries(aOther.getAllocator())
+        {
+            const SharedAllocation<StaticContainer<typename Map<K,T>::Entry>> entries = aOther.getEntries();
+            const auto end = entries->end();
+            for(auto i = entries->begin(); i != end; ++i) emplace(i->first, i->second);
+        }
+
 		SOLAIRE_EXPORT_CALL ~ListMap() throw() {
 
 		}
@@ -69,23 +77,20 @@ namespace Solaire {
 
 		const T& SOLAIRE_EXPORT_CALL get(const K& aKey) const throw() override {
             const int32_t pos = findIndex(aKey);
-
-            return pos == mEntries[pos].second;
+            return mEntries[pos].second;
         }
 
 		T& SOLAIRE_EXPORT_CALL get(const K& aKey) throw() override {
             const int32_t pos = findIndex(aKey);
-
-            return pos == mEntries[pos].second;
+            return mEntries[pos].second;
         }
 
 		bool SOLAIRE_EXPORT_CALL contains(const K& aKey) const throw() override {
             return mEntries.size() != findIndex(aKey);
         }
 
-		bool SOLAIRE_EXPORT_CALL erase(const K& aKey) const throw() override {
+		bool SOLAIRE_EXPORT_CALL erase(const K& aKey) throw() override {
 		    const int32_t pos = findIndex(aKey);
-
             return pos == mEntries.size() ? false : mEntries.erase(pos);
         }
 
@@ -102,8 +107,9 @@ namespace Solaire {
         }
 
         SharedAllocation<StaticContainer<typename Map<K,T>::Entry>> getEntries() const throw() override {
-            typedef ArrayList<typename Map<K,T>::Entry> ContainterType;
-            return getAllocator().sharedAllocate<ContainterType>(mEntries);
+            return SharedAllocation<StaticContainer<typename Map<K,T>::Entry>>();
+            //typedef ArrayList<typename Map<K,T>::Entry> ContainterType;
+            //return getAllocator().sharedAllocate<ContainterType>(mEntries);
         }
 
 	};
