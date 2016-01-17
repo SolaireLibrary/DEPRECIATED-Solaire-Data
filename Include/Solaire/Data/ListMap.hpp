@@ -107,9 +107,10 @@ namespace Solaire {
         }
 
         SharedAllocation<StaticContainer<typename Map<K,T>::Entry>> getEntries() const throw() override {
-            return SharedAllocation<StaticContainer<typename Map<K,T>::Entry>>();
-            //typedef ArrayList<typename Map<K,T>::Entry> ContainterType;
-            //return getAllocator().sharedAllocate<ContainterType>(mEntries);
+            typedef ArrayList<typename Map<K,T>::Entry> ContainerType;
+            Allocator& allocator = getAllocator();
+            ContainerType* const tmp = new(allocator.allocate(sizeof(ContainerType))) ContainerType(mEntries);
+            return SharedAllocation<StaticContainer<typename Map<K,T>::Entry>>(allocator, tmp);
         }
 
 	};
