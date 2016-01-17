@@ -180,11 +180,7 @@ namespace Solaire{
             mHead(0),
             mSize(DEFAULT_ARRAY_LIST_SIZE),
             mData(static_cast<Type*>(getDefaultAllocator().allocate(sizeof(Type) * DEFAULT_ARRAY_LIST_SIZE)))
-        {
-
-                std::cout << std::endl << ((uint64_t) mAllocator) << " == " << ((uint64_t)&getDefaultAllocator()) <<
-                    " = " << (mAllocator == &getDefaultAllocator() ? "true" : "false") << std::endl;
-        }
+        {}
 
         ArrayList(Allocator& aAllocator) :
             mAllocator(&aAllocator),
@@ -229,9 +225,6 @@ namespace Solaire{
         }
 
         SOLAIRE_EXPORT_CALL ~ArrayList() {
-
-                std::cout << std::endl << ((uint64_t) mAllocator) << " == " << ((uint64_t) &getDefaultAllocator()) <<
-                    " = " << (mAllocator == &getDefaultAllocator() ? "true" : "false") << std::endl;
             if(mData != nullptr) {
                 clear();
                 mAllocator->deallocate(mData);

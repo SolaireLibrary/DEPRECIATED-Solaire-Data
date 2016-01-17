@@ -78,11 +78,15 @@ namespace Solaire{
     public:
         CString() :
             mData()
-        {}
+        {
+            mData.pushBack('\0');
+        }
 
         CString(Allocator& aAllocator) :
             mData(aAllocator)
-        {}
+        {
+            mData.pushBack('\0');
+        }
 
         CString(const Self& aOther) :
             mData(aOther.mData)
@@ -152,7 +156,6 @@ namespace Solaire{
         // Inherited from Stack
 
 		Type& SOLAIRE_EXPORT_CALL pushBack(const Type& aValue) throw() override {
-            //Type& ref = mData.back() = aValue;
             Type& ref = mData[mData.size() - 1] = aValue;
             mData.pushBack('\0');
             return ref;
