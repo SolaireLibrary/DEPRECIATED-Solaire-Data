@@ -259,7 +259,7 @@ namespace Solaire{
         LinkedList() :
             mFront(),
             mBack(),
-            mAllocator(&DEFAULT_ALLOCATOR),
+            mAllocator(&getDefaultAllocator()),
             mSize(0)
         {}
 

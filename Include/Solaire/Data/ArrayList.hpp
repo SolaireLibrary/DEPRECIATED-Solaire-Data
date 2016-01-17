@@ -30,6 +30,8 @@
 	Last Modified	: 11th January 2016
 */
 
+#include <iostream>
+
 #include <cstdint>
 #include "Solaire/Core/NewAllocator.hpp"
 #include "Solaire/Core/Container.hpp"
@@ -174,11 +176,15 @@ namespace Solaire{
 
     public:
         ArrayList() :
-            mAllocator(&DEFAULT_ALLOCATOR),
+            mAllocator(&getDefaultAllocator()),
             mHead(0),
             mSize(DEFAULT_ARRAY_LIST_SIZE),
-            mData(static_cast<Type*>(DEFAULT_ALLOCATOR.allocate(sizeof(Type) * DEFAULT_ARRAY_LIST_SIZE)))
-        {}
+            mData(static_cast<Type*>(getDefaultAllocator().allocate(sizeof(Type) * DEFAULT_ARRAY_LIST_SIZE)))
+        {
+
+                std::cout << std::endl << ((uint64_t) mAllocator) << " == " << ((uint64_t)&getDefaultAllocator()) <<
+                    " = " << (mAllocator == &getDefaultAllocator() ? "true" : "false") << std::endl;
+        }
 
         ArrayList(Allocator& aAllocator) :
             mAllocator(&aAllocator),
@@ -216,13 +222,16 @@ namespace Solaire{
             mAllocator(&aOther.getAllocator()),
             mHead(0),
             mSize(DEFAULT_ARRAY_LIST_SIZE),
-            mData(static_cast<Type*>(DEFAULT_ALLOCATOR.allocate(sizeof(Type) *DEFAULT_ARRAY_LIST_SIZE)))
+            mData(static_cast<Type*>(aOther.getAllocator().allocate(sizeof(Type) *DEFAULT_ARRAY_LIST_SIZE)))
         {
             const auto end = aOther.end();
             for(auto i = aOther.begin(); i != end; ++i) pushBack(*i);
         }
 
         SOLAIRE_EXPORT_CALL ~ArrayList() {
+
+                std::cout << std::endl << ((uint64_t) mAllocator) << " == " << ((uint64_t) &getDefaultAllocator()) <<
+                    " = " << (mAllocator == &getDefaultAllocator() ? "true" : "false") << std::endl;
             if(mData != nullptr) {
                 clear();
                 mAllocator->deallocate(mData);

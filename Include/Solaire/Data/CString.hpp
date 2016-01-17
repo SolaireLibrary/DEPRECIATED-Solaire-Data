@@ -94,7 +94,7 @@ namespace Solaire{
 
         template<size_t LENGTH>
         CString(const Type(&aString)[LENGTH]) :
-            mData(DEFAULT_ALLOCATOR, LENGTH)
+            mData(getDefaultAllocator(), LENGTH)
         {
             std::memcpy(mData.getPtr(0), aString, LENGTH);
             mData.mHead = LENGTH;
@@ -109,7 +109,7 @@ namespace Solaire{
         }
 
         CString(const StringConstant<char>& aOther) :
-            mData(DEFAULT_ALLOCATOR, aOther.size() + 1)
+            mData(getDefaultAllocator(), aOther.size() + 1)
         {
             const int32_t size = aOther.size();
             if(aOther.isContiguous()) {
