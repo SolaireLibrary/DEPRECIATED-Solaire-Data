@@ -30,7 +30,7 @@
 	Last Modified	: 12th January 2016
 */
 
-#include <ostream>
+#include <iostream>
 #include "Solaire/Core/OStream.hpp"
 
 
